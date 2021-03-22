@@ -53,10 +53,15 @@ export default {
         order: "hot",
         skip: 0,
       },
+      // 是否还有数据
       hasMore: true,
+      // 是否在加载中
+      getLoading: false,
     };
   },
   mounted() {
+    // 修改navbar标题
+    uni.setNavigationBarTitle({ title: "首页" });
     this.getData();
   },
   computed: {
@@ -80,17 +85,20 @@ export default {
         } else {
           this.hots = [...this.hots, ...result.res.vertical];
         }
+        this.getLoading = false;
       });
     },
     handleToLower() {
-      if (this.hasMore) {
-        this.params.skip += this.params.limit;
-        this.getData();
-      } else {
-        uni.showToast({
-          title: "没有数据了",
-          icon: "none",
-        });
+      if (this.getLoading === false) {
+        if (this.hasMore) {
+          this.params.skip += this.params.limit;
+          this.getData();
+        } else {
+          uni.showToast({
+            title: "没有数据了",
+            icon: "none",
+          });
+        }
       }
     },
   },

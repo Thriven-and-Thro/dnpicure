@@ -3,7 +3,12 @@
 </template>
 
 <script>
-export default {};
+export default {
+  name: "HomeCategory",
+  mounted() {
+    uni.setNavigationBarTitle({ title: "分类" });
+  },
+};
 </script>
 
 <style scoped>

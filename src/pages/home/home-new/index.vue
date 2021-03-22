@@ -3,7 +3,14 @@
 </template>
 
 <script>
-export default {};
+export default {
+  name: "HomeNew",
+  mounted() {
+    uni.setNavigationBarTitle({
+      title: "分类",
+    });
+  },
+};
 </script>
 
 <style scoped>
