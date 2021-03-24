@@ -3,13 +3,14 @@
   <!-- 包含一个触底事件@scrolltolower -->
   <scroll-view scroll-y class="recommend_view" @scrolltolower="handleToLower">
     <view class="recommond_top">
-      <view
+      <navigator
         class="recommond_item"
         v-for="(item, index) in recommends"
         :key="index"
+        :url="`/pages/album/index?id=${item.target}`"
       >
         <image :src="item.thumb" mode="widthFix"></image>
-      </view>
+      </navigator>
     </view>
 
     <view class="recommond_midden">
@@ -20,10 +21,12 @@
       </view>
       <view class="recommond_midden_img">
         <view v-for="(item, index) in monthes.items" :key="index">
-          <image
-            mode="aspectFill"
-            :src="item.img + item.rule.replace('$<Height>', 360)"
-          ></image>
+          <go-detail :list="monthes.items" :index="index">
+            <image
+              mode="aspectFill"
+              :src="item.img + item.rule.replace('$<Height>', 360)"
+            ></image>
+          </go-detail>
         </view>
       </view>
     </view>
@@ -32,7 +35,9 @@
       <view class="recommond_buttom_title"> <text>热门 </text></view>
       <view class="recommond_buttom_img">
         <view v-for="(item, index) in hots" :key="index">
-          <image mode="aspectFill" :src="item.thumb"> </image> </view
+          <go-detail :list="hots" :index="index">
+            <image mode="aspectFill" :src="item.thumb">
+            </image> </go-detail></view
       ></view>
     </view>
   </scroll-view>
@@ -41,6 +46,7 @@
 <script>
 // 引入第三方时间处理库
 import moment from "moment";
+import goDetail from "@/components/goDetail.vue";
 export default {
   name: "HomeRecommend",
   data() {
@@ -58,6 +64,9 @@ export default {
       // 是否在加载中
       getLoading: false,
     };
+  },
+  components: {
+    goDetail,
   },
   mounted() {
     // 修改navbar标题

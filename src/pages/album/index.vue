@@ -13,7 +13,7 @@
     <view class="album_comment">
       <view class="album_comment_author">
         <view class="album_comment_author_img">
-          <image :scr="album.user.avatar"></image
+          <image :src="album.user.avatar"></image
         ></view>
         <text>{{ album.user.name }}</text>
       </view>
@@ -21,10 +21,26 @@
         <text>{{ album.desc }}</text>
       </view>
     </view>
+
+    <view class="album_list">
+      <view
+        class="album_list_item"
+        v-for="(item, index) in wallpaper"
+        :key="index"
+      >
+        <go-detail :list="wallpaper" :index="index">
+          <image
+            mode="widthFix"
+            :src="item.thumb + item.rule.replace('$<Height>', 360)"
+          ></image>
+        </go-detail>
+      </view>
+    </view>
   </view>
 </template>
 
 <script>
+import goDetail from "@/components/goDetail.vue";
 export default {
   name: "Album",
   data() {
@@ -40,22 +56,49 @@ export default {
       id: "",
       album: {},
       wallpaper: [],
+      hasMore: true,
+      getLoading: false,
     };
+  },
+
+  components: {
+    goDetail,
   },
   onLoad(option) {
     this.id = option.id;
     this.getData();
   },
+  onReachBottom() {
+    if (!this.getLoading) {
+      if (this.hasMore) {
+        this.params.first = 0;
+        this.params.skip += this.params.limit;
+        this.getData();
+      } else {
+        uni.showToast({
+          title: "没有数据了",
+          icon: "none",
+        });
+      }
+    }
+  },
   methods: {
     getData() {
+      this.getLoading = true;
       this.request({
         url: `http://157.122.54.189:9088/image/v1/wallpaper/album/${this.id}/wallpaper`,
         data: this.params,
       }).then((result) => {
-        this.album = result.res.album;
-        this.wallpaper = result.res.wallpaper;
-        console.log(this.album);
+        if (Object.keys(this.album).length === 0) {
+          this.album = result.res.album;
+        }
+        if (result.res.wallpaper.length === 0) {
+          this.hasMore = false;
+        } else {
+          this.wallpaper = [...this.wallpaper, ...result.res.wallpaper];
+        }
       });
+      this.getLoading = false;
     },
   },
 };
@@ -104,16 +147,32 @@ export default {
     display: flex;
     height: 5vh;
     width: 100%;
+    font-weight: 500;
     .album_comment_author_img {
       width: 15vw;
+      height: 5vh;
       > image {
-        height: 90%;
-        width: 90%;
+        width: 5vh;
+        height: 5vh;
       }
     }
   }
   .album_comment_content {
     width: 100%;
+    font-size: 14px;
+    font-weight: 300;
+  }
+}
+.album_list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  .album_list_item {
+    width: 33.33%;
+    image {
+      display: block;
+      width: 100%;
+    }
   }
 }
 </style>
