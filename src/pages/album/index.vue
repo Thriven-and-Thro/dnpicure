@@ -30,7 +30,7 @@
       >
         <go-detail :list="wallpaper" :index="index">
           <image
-            mode="widthFix"
+            mode="heightFix"
             :src="item.thumb + item.rule.replace('$<Height>', 360)"
           ></image>
         </go-detail>
@@ -169,9 +169,12 @@ export default {
   align-items: center;
   .album_list_item {
     width: 33.33%;
-    image {
-      display: block;
-      width: 100%;
+    height: 15vh;
+    overflow: hidden;
+    border: 1px solid #fff;
+    box-sizing: border-box;
+    ::v-deep image {
+      height: 15vh;
     }
   }
 }

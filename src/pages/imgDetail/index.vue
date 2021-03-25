@@ -11,7 +11,9 @@
     </view>
 
     <view class="high_img">
-      <image mode="widthFix" :src="imgDetail.newThumb"></image>
+      <swiper-action @swiperAction="swiperAction">
+        <image mode="widthFix" :src="imgDetail.newThumb"></image>
+      </swiper-action>
     </view>
 
     <view class="user_rank">
@@ -22,7 +24,7 @@
       <view><image src="~@/static/img/common/收藏.png"></image>收藏</view>
     </view>
 
-    <view class="album_wrap" v-if="this.album.length !== 0">
+    <view class="album_wrap" v-if="album.length">
       <view class="album_title">相关</view>
       <view class="album_item" v-for="(item, index) in album" :key="index">
         <view class="album_cover"
@@ -36,37 +38,24 @@
       </view>
     </view>
 
-    <view class="comment_user">
-      <view class="comment_title">最热评论</view>
-      <view class="comment_item" v-for="(item, index) in hot" :key="index">
-        <view class="comment_user_top">
-          <view class="comment_user_top_img">
-            <image :src="item.user.avatar"></image>
-          </view>
-          <view class="comment_user_top_name">{{ item.user.name }}</view>
-          <view class="comment_user_top_time">{{ item.atime }}</view>
-          <view class="user_badge">
-            <image
-              v-for="(item2, index) in item.user.title"
-              :key="index"
-              :src="item2.icon"
-            ></image>
-          </view>
-        </view>
-        <view class="comment_user_bottom">
-          <view class="comment_user_bottom_content">{{}}</view>
-          <view class="comment_user_bottom_rank">
-            <image></image>
-            {{}}
-          </view>
-        </view>
-      </view>
+    <comment :comment="hot">
+      <template v-slot:comment_title>最热评论</template>
+    </comment>
+
+    <comment :comment="comment">
+      <template v-slot:comment_title>最新评论</template>
+    </comment>
+
+    <view class="img_load">
+      <view @click="handleDownload">下载图片</view>
     </view>
   </view>
 </template>
 
 <script>
 import moment from "moment";
+import Comment from "@/components/Comment.vue";
+import SwiperAction from "@/components/SwiperAction.vue";
 // 使用中文时间
 moment.locale("zh-CN");
 export default {
@@ -77,34 +66,73 @@ export default {
       album: [],
       hot: [],
       comment: [],
+      imgIndex: 0,
     };
+  },
+  components: {
+    Comment,
+    SwiperAction,
   },
   onLoad() {
     // 从全局获得数据
-    const { imgList, imgIndex } = getApp().globalData;
-    this.imgDetail = imgList[imgIndex];
-    // dom拿数据时onLoad还没到，此时拿不到imgDetail的数据，故要先组装一下
-    if (this.imgDetail.rule.indexOf("$<Width>") !== -1) {
-      this.imgDetail.newThumb = this.imgDetail.thumb;
-    } else {
-      this.imgDetail.newThumb =
-        this.imgDetail.thumb + this.imgDetail.rule.replace(`$<Height>`, 360);
-    }
-    // 将时间戳转换成相对时间
-    this.imgDetail.cnTime = moment(this.imgDetail.atime * 1000).fromNow();
-    // 发送请求
-    this.getComments(this.imgDetail.id);
+    const { imgIndex } = getApp().globalData;
+    this.imgIndex = imgIndex;
+    this.getData();
   },
   methods: {
+    getData() {
+      const { imgList } = getApp().globalData;
+      this.imgDetail = imgList[this.imgIndex];
+      // dom拿数据时onLoad还没到，此时拿不到imgDetail的数据，故要先组装一下
+      if (this.imgDetail.rule.indexOf("$<Width>") !== -1) {
+        this.imgDetail.newThumb = this.imgDetail.thumb;
+      } else {
+        this.imgDetail.newThumb =
+          this.imgDetail.thumb + this.imgDetail.rule.replace(`$<Height>`, 360);
+      }
+      this.imgDetail.cnTime = moment(this.imgDetail.atime * 1000).fromNow();
+      // 发送请求
+      this.getComments(this.imgDetail.id);
+    },
     // 评论的网络请求
     getComments(id) {
       this.request({
         url: `http://service.picasso.adesk.com/v2/wallpaper/wallpaper/${id}/comment`,
       }).then((result) => {
-        console.log(result);
         this.album = result.res.album;
         this.hot = result.res.hot;
         this.comment = result.res.comment;
+      });
+    },
+    // 滑动切换图片
+    swiperAction(e) {
+      const { imgList } = getApp().globalData;
+      if (e.direction === "left" && this.imgIndex < imgList.length - 1) {
+        this.imgIndex++;
+        this.getData();
+      } else if (e.direction === "right" && this.imgIndex > 0) {
+        this.imgIndex--;
+        this.getData();
+      } else {
+        uni.showToast({
+          title: "没有数据了",
+          icon: "none",
+        });
+      }
+    },
+    // 下载事件
+    async handleDownload() {
+      uni.showLoading({
+        title: "下载中",
+      });
+      const result1 = await uni.downloadFile({ url: this.imgDetail.img });
+      const { tempFilePath } = result1[1];
+      await uni.saveImageToPhotosAlbum({
+        filePath: tempFilePath,
+      });
+      uni.hideLoading();
+      uni.showToast({
+        title: "下载成功！",
       });
     },
   },
@@ -145,17 +173,17 @@ export default {
   display: flex;
   text-align: center;
   align-items: center;
-  height: 4vh;
-  border-bottom: 1px solid #ddd;
+  height: 5vh;
+  border-bottom: 5px solid #eee;
   view {
-    line-height: 4vh;
+    line-height: 5vh;
     &:nth-child(1),
     &:nth-child(2) {
       flex: 1;
       > image {
         padding: 0 5px;
-        width: 20px;
-        height: 20px;
+        width: 15px;
+        height: 15px;
         vertical-align: middle;
       }
     }
@@ -163,15 +191,17 @@ export default {
 }
 .album_wrap {
   .album_title {
-    padding: 2vw;
+    margin: 1vh 0 1vh 1vw;
+    padding-left: 2vw;
     height: 5vh;
     line-height: 5vh;
+    border-left: 2vw solid $color;
   }
   .album_item {
     display: flex;
     position: relative;
     height: 30vw;
-    border-bottom: 1px solid #bbb;
+    border-bottom: 5px solid #eee;
     .album_cover {
       flex: 0 1 30%;
       align-items: center;
@@ -200,6 +230,18 @@ export default {
       color: #999;
       transform: translateY(-50%);
     }
+  }
+}
+.img_load {
+  height: 13vh;
+  width: 100%;
+  > view {
+    margin: 2vh 2vw;
+    color: #fff;
+    line-height: 9vh;
+    font-weight: 700;
+    text-align: center;
+    background-color: $color;
   }
 }
 </style>

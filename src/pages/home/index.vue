@@ -2,8 +2,8 @@
   <view>
     <template>
       <view>
-        <view class="home_tar">
-          <view class="home_tar_control">
+        <view class="tabbar">
+          <view class="tabbar_control">
             <uni-segmented-control
               :current="current"
               :values="items.map((item) => item.title)"
@@ -12,7 +12,7 @@
               activeColor="#d4237a"
             ></uni-segmented-control>
           </view>
-          <view class="home_tar_search"
+          <view class="tabbar_search"
             ><image src="../../static/img/common/search.png"></image
           ></view>
         </view>
@@ -50,7 +50,7 @@ export default {
         { title: "最新" },
         { title: "专辑" },
       ],
-      current: 0,
+      current: 1,
     };
   },
   methods: {
@@ -65,24 +65,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.home_tar {
-  position: relative;
-  width: 100%;
-  .home_tar_control {
-    margin: 0 auto;
-    width: 60%;
-  }
-  .home_tar_search {
-    position: absolute;
-    right: 10px;
-    top: 5px;
-    width: 25px;
-    height: 25px;
-    z-index: 10;
-    image {
-      width: 25px;
-      height: 25px;
-    }
-  }
-}
+@include tabbar;
 </style>
