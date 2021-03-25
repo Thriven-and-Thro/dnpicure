@@ -6,21 +6,26 @@
     @scrolltolower="handleScrolltolower"
   >
     <view class="video_item" v-for="(item, index) in videoData" :key="index">
-      <image :src="item.img" mode="widthFix"></image>
+      <go-video :list="videoData" :index="index">
+        <image :src="item.img" mode="widthFix"></image>
+      </go-video>
     </view>
   </scroll-view>
 </template>
 
 <script>
+import GoVideo from "./GoVideo.vue";
 export default {
   name: "VideoList",
+  components: {
+    GoVideo,
+  },
   props: {
     videoData: {
       type: Array,
       default: [],
     },
   },
-  components: {},
   methods: {
     handleScrolltolower() {
       this.$emit("handleScrolltolower");

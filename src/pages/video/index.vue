@@ -65,12 +65,12 @@ export default {
   },
   methods: {
     onClickItem(item) {
-      if (this.currentIndex < 4) {
-        this.$refs.videoMain.onClickItem();
-      }
       if (this.current !== item.currentIndex) {
         this.current = item.currentIndex;
-        // 父子通信
+        // 分类模块bug，不处理
+        try {
+          this.$refs.videoMain.onClickItem1();
+        } catch {}
       }
     },
   },

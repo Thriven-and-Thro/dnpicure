@@ -1,15 +1,21 @@
 {
 	"pages": [
 		{
+			"path": "pages/home/index",
+			"style": {
+				"navigationBarTitleText": "首页"
+			}
+		},
+		{
 			"path": "pages/video/index",
 			"style": {
 				"navigationBarTitleText": "精美视频"
 			}
 		},
 		{
-			"path": "pages/home/index",
+			"path": "pages/videoPlay/index",
 			"style": {
-				"navigationBarTitleText": "首页"
+				"navigationBarTitleText": "视频-详情"
 			}
 		},
 		{

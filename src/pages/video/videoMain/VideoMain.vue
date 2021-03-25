@@ -45,7 +45,6 @@ export default {
           this.hasMore = false;
         }
       });
-
       this.getLoading = false;
     },
     handleScrolltolower() {
@@ -61,7 +60,7 @@ export default {
         }
       }
     },
-    onClickItem() {
+    onClickItem1() {
       this.videowp = [];
       this.hasMore = true;
     },
