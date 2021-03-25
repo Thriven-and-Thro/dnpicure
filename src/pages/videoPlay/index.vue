@@ -8,12 +8,12 @@
 
       <view class="videoplay_btn">
         <view @click="handleMuted">
-          <image v-show="!muted" src="@/static/img/common/声音.png"></image>
-          <image v-show="muted" src="@/static/img/common/静音.png"> </image
+          <image v-show="!muted" src="@/static/img/common/voice.png"></image>
+          <image v-show="muted" src="@/static/img/common/mute.png"> </image
         ></view>
         <view class="videoplay_btn_share">
           <button open-type="share"></button>
-          <image src="@/static/img/common/分享.png"></image>
+          <image src="@/static/img/common/share.png"></image>
         </view>
       </view>
 
@@ -82,7 +82,7 @@ export default {
         this.videoIndex++;
       } else if (e.direction === "last" && this.videoIndex > 0) {
         this.videoIndex--;
-      } else {
+      } else if (e.direction !== "left" && e.direction !== "right") {
         uni.showToast({
           title: "没有数据了",
           icon: "none",

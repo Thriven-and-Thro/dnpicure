@@ -1,3 +1,4 @@
+// 评论的封装
 <template>
   <view class="comment_user" v-if="comment1.length">
     <view class="comment_title">
@@ -23,7 +24,7 @@
       <view class="comment_user_bottom">
         <view class="comment_user_bottom_content">{{ item.content }}</view>
         <view class="comment_user_bottom_rank">
-          <image src="~@/static/img/common/点赞.png"></image>
+          <image src="~@/static/img/common/thumbs-up.png"></image>
           {{ item.size }}
         </view>
       </view>
@@ -71,7 +72,6 @@ export default {
     line-height: 5vh;
     border-left: 2vw solid $color;
   }
-
   .comment_item {
     padding: 2vh 2vw;
     .comment_user_top {

@@ -18,10 +18,10 @@
 
     <view class="user_rank">
       <view
-        ><image src="~@/static/img/common/点赞.png"></image
+        ><image src="~@/static/img/common/thumbs-up.png"></image
         >{{ imgDetail.rank }}</view
       >
-      <view><image src="~@/static/img/common/收藏.png"></image>收藏</view>
+      <view><image src="~@/static/img/common/collection.png"></image>收藏</view>
     </view>
 
     <view class="album_wrap" v-if="album.length">
@@ -113,7 +113,7 @@ export default {
       } else if (e.direction === "right" && this.imgIndex > 0) {
         this.imgIndex--;
         this.getData();
-      } else {
+      } else if (e.direction !== "last" && e.direction !== "next") {
         uni.showToast({
           title: "没有数据了",
           icon: "none",
@@ -164,9 +164,9 @@ export default {
   }
 }
 .high_img {
-  width: 100%;
-  > image {
-    width: 100%;
+  width: 100vw;
+  ::v-deep image {
+    width: 100vw;
   }
 }
 .user_rank {
