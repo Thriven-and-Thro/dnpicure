@@ -62,7 +62,7 @@ export default {
       });
       const { tempFilePath } = (
         await uni.downloadFile({
-          url: this.videoList[videoIndex].video,
+          url: this.videoList[this.videoIndex].video,
         })
       )[1];
       await uni.saveVideoToPhotosAlbum({
